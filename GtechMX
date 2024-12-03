@@ -1,0 +1,171 @@
+-- Crear base de datos
+CREATE DATABASE VentaConsolasRetroAR_GtechMx;
+USE VentaConsolasRetroAR_GtechMx;
+
+-- Tabla de productos
+CREATE TABLE Productos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    categoria VARCHAR(50),
+    precio DECIMAL(10, 2),
+    descripcion TEXT,
+    stock_total INT,
+    fabricante VARCHAR(100)
+);
+
+-- Tabla de clientes
+CREATE TABLE Clientes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100),
+    correo VARCHAR(100) UNIQUE,
+    direccion TEXT,
+    telefono VARCHAR(15),
+    pais VARCHAR(50),
+    fecha_registro DATE
+);
+
+-- Tabla de ventas
+CREATE TABLE Ventas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cliente_id INT,
+    producto_id INT,
+    fecha DATE,
+    cantidad INT,
+    total DECIMAL(10, 2),
+    metodo_pago VARCHAR(50),
+    FOREIGN KEY (cliente_id) REFERENCES Clientes(id),
+    FOREIGN KEY (producto_id) REFERENCES Productos(id)
+);
+
+-- Tabla de inventario
+CREATE TABLE Inventario (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    producto_id INT,
+    ubicacion VARCHAR(100),
+    stock INT,
+    FOREIGN KEY (producto_id) REFERENCES Productos(id)
+);
+
+-- Tabla de tiendas
+CREATE TABLE Tiendas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100),
+    ubicacion VARCHAR(100),
+    telefono VARCHAR(15)
+);
+
+-- Tabla de exportaciones
+CREATE TABLE Exportaciones (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    producto_id INT,
+    destino VARCHAR(100),
+    cantidad INT,
+    fecha_envio DATE,
+    FOREIGN KEY (producto_id) REFERENCES Productos(id)
+);
+
+-- Tabla de pedidos en línea
+CREATE TABLE PedidosEnLinea (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cliente_id INT,
+    producto_id INT,
+    cantidad INT,
+    direccion_envio TEXT,
+    estado VARCHAR(50),
+    fecha_pedido DATE,
+    FOREIGN KEY (cliente_id) REFERENCES Clientes(id),
+    FOREIGN KEY (producto_id) REFERENCES Productos(id)
+);
+
+-- Tabla de métodos de pago
+CREATE TABLE MetodosDePago (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50),
+    descripcion TEXT
+);
+
+-- Tabla de promociones
+CREATE TABLE Promociones (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    producto_id INT,
+    descripcion TEXT,
+    descuento_porcentaje DECIMAL(5, 2),
+    fecha_inicio DATE,
+    fecha_fin DATE,
+    FOREIGN KEY (producto_id) REFERENCES Productos(id)
+);
+
+-- Tabla de feedback
+CREATE TABLE Feedback (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cliente_id INT,
+    producto_id INT,
+    comentario TEXT,
+    calificacion INT CHECK (calificacion BETWEEN 1 AND 5),
+    fecha DATE,
+    FOREIGN KEY (cliente_id) REFERENCES Productos(id)
+);
+
+-- Insertar datos de ejemplo
+
+-- Productos
+INSERT INTO Productos (nombre, categoria, precio, descripcion, stock_total, fabricante)
+VALUES 
+('REGA AR Classic', 'Consola', 299.99, 'Consola retro con integración AR y diseño clásico.', 700, 'GtechMx'),
+('REGA AR Pro', 'Consola', 399.99, 'Modelo avanzado con soporte AR multijugador.', 500, 'GtechMx'),
+('REGA AR Adapter', 'Accesorio', 99.99, 'Adaptador AR para consolas REGA AR.', 1200, 'GtechMx');
+
+-- Clientes
+INSERT INTO Clientes (nombre, correo, direccion, telefono, pais, fecha_registro)
+VALUES 
+('Carlos Gómez', 'carlos.gomez@example.com', 'Av. Reforma 100, CDMX', '5559876543', 'México', '2024-01-10'),
+('Sophia Williams', 'sophia.w@example.com', '456 Elm St, Chicago, IL', '3127654321', 'Estados Unidos', '2024-01-15');
+
+-- Ventas
+INSERT INTO Ventas (cliente_id, producto_id, fecha, cantidad, total, metodo_pago)
+VALUES 
+(1, 1, '2024-01-20', 1, 299.99, 'Tarjeta de Crédito'),
+(2, 2, '2024-01-25', 2, 799.98, 'PayPal');
+
+-- Inventario
+INSERT INTO Inventario (producto_id, ubicacion, stock)
+VALUES 
+(1, 'CDMX - Almacén Central', 400),
+(2, 'Chicago - Almacén Regional', 300),
+(3, 'Guadalajara - Bodega Occidente', 500);
+
+-- Tiendas
+INSERT INTO Tiendas (nombre, ubicacion, telefono)
+VALUES 
+('GtechMx Store CDMX', 'Polanco, CDMX', '5551237890'),
+('TechGalaxy Chicago', 'Michigan Ave, Chicago', '3128765432');
+
+-- Exportaciones
+INSERT INTO Exportaciones (producto_id, destino, cantidad, fecha_envio)
+VALUES 
+(1, 'Canadá', 50, '2024-01-30'),
+(2, 'Reino Unido', 30, '2024-02-01'),
+(3, 'Japón', 100, '2024-02-05');
+
+-- Pedidos en línea
+INSERT INTO PedidosEnLinea (cliente_id, producto_id, cantidad, direccion_envio, estado, fecha_pedido)
+VALUES 
+(1, 3, 1, 'Av. Reforma 100, CDMX', 'Entregado', '2024-01-22'),
+(2, 1, 1, '456 Elm St, Chicago, IL', 'En tránsito', '2024-01-28');
+
+-- Métodos de pago
+INSERT INTO MetodosDePago (nombre, descripcion)
+VALUES 
+('Tarjeta de Crédito', 'Pago con tarjetas Visa y MasterCard.'),
+('PayPal', 'Plataforma de pagos en línea segura.');
+
+-- Promociones
+INSERT INTO Promociones (producto_id, descripcion, descuento_porcentaje, fecha_inicio, fecha_fin)
+VALUES 
+(1, '10% de descuento por preventa.', 10.00, '2024-01-01', '2024-01-15');
+
+-- Feedback
+INSERT INTO Feedback (cliente_id, producto_id, comentario, calificacion, fecha)
+VALUES 
+(1, 1, 'Excelente diseño y experiencia AR única.', 5, '2024-01-25'),
+(2, 2, 'Muy funcional, aunque el precio es algo alto.', 4, '2024-01-29');
